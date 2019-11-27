@@ -66,7 +66,7 @@ class _TabScreenState extends State<TabScreen> {
                         child: Image.asset(
                           "assets/images/background.png",
                           fit: BoxFit.fitWidth,
-                          height: 130,
+                          height: 210,
                           width: 500,
                         ),
                         ),

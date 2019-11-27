@@ -97,7 +97,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
           width: 280,
           height: 200,
           child: Image.network(
-            "http://tradebarterflutter.com/mytradebarter/images/${widget.barter.barterimage}", 
+            'http://tradebarterflutter.com/mytradebarter/images/${widget.barter.barterimage}', 
             fit: BoxFit.fill,
           ),
         ),
@@ -134,7 +134,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
                     "Barter Price",
                     style: TextStyle(fontWeight: FontWeight.bold)
                   ),
-                  Text(widget.barter.barterprice),
+                  Text("RM" + widget.barter.barterprice),
                 ]),
 
                 TableRow(children: [
@@ -159,6 +159,8 @@ class _DetailInterfaceState extends State<DetailInterface> {
                   },
                 ),
               ),
+              
+              SizedBox(height: 10,),
 
               Container(
                 width: 350,
@@ -304,5 +306,5 @@ class _DetailInterfaceState extends State<DetailInterface> {
     }).catchError((err) {
       print(err);
     });
-  }  
+  }
 }
