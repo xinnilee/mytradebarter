@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mytradebarter/mainscreen.dart';
 import 'package:mytradebarter/registrationscreen.dart';
 import 'package:mytradebarter/forgotscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart'as http;
 import 'package:progress_dialog/progress_dialog.dart';
+import 'user.dart';
 
 String urlLogin = "http://tradebarterflutter.com/mytradebarter/php/login_user.php";
+ 
+  final TextEditingController _emcontroller = TextEditingController();
+  String _email = "";
+  final TextEditingController _passcontroller = TextEditingController();
+  String _password = "";
+  bool _isChecked = false;
 
 void main() => runApp(MyApp());
  
@@ -26,12 +34,6 @@ class LoginPage extends StatefulWidget{
 }
 
 class _LoginPageState extends State<LoginPage>{
-  final TextEditingController _emcontroller = TextEditingController();
-  String _email = "";
-  final TextEditingController _passcontroller = TextEditingController();
-  String _password = "";
-  bool _isChecked = false;
-
   @override
   void initState(){
     loadpref();
@@ -41,6 +43,9 @@ class _LoginPageState extends State<LoginPage>{
   
   @override
   Widget build(BuildContext context){
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.blueGrey)
+      );
     return WillPopScope(
       onWillPop: _onBackPressAppBar,
       child: Scaffold(
@@ -184,31 +189,47 @@ class _LoginPageState extends State<LoginPage>{
   void _onLogin(){
     _email = _emcontroller.text;
     _password = _passcontroller.text;
-    if(_isEmailValid(_email)&&(_password.length>4)){
+    if(_isEmailValid(_email) && (_password.length > 4)){
       ProgressDialog pr = new ProgressDialog(
         context, 
-        type: ProgressDialogType.Normal, isDismissible: false
+        type: ProgressDialogType.Normal, 
+        isDismissible: false
       );
       pr.style(message: "Login in");
       pr.show();
 
-      http.post(urlLogin,
-        body:{
+      http.post(urlLogin, body:{
           "email": _email,
           "password": _password,
-        }
-      ).then((res){
+      }).then((res) {
         print(res.statusCode);
+        var string = res.body;
+        List dres = string.split(",");
+        print(dres);
+
         Toast.show(
-          res.body, 
+          dres[0], 
           context,
           duration: Toast.LENGTH_LONG,
           gravity: Toast.BOTTOM
         );
-        if(res.body == "success"){
+        if(dres[0] == "success"){
           pr.dismiss();
-        }
-        else{
+          print("Radius");
+          print(dres);
+          User user = new User(
+            name: dres[1],
+            email: dres[2],
+            phone: dres[3],
+            radius: dres[4],
+            credit: dres[5],
+            rating: dres[6]
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MainScreen(user: user)
+          ));
+        } else{
           pr.dismiss();
         }
       }).catchError((err){
@@ -216,7 +237,7 @@ class _LoginPageState extends State<LoginPage>{
         print(err);
       });
       
-    }
+    } else {}
   }
 
   void _onRegister(){
@@ -252,7 +273,6 @@ class _LoginPageState extends State<LoginPage>{
     print(_email);
     print(_password);
 
-    
   }
 
   void savepref(bool value) async{
@@ -262,7 +282,7 @@ class _LoginPageState extends State<LoginPage>{
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if(value){
-      if(_isEmailValid(_email)&&(_password.length > 5)){
+      if(_isEmailValid(_email) && (_password.length > 5)){
         await prefs.setString('email', _email);
         await prefs.setString('pass', _password);
         print('Save pref $_email');
@@ -273,8 +293,19 @@ class _LoginPageState extends State<LoginPage>{
           duration: Toast.LENGTH_SHORT,
           gravity: Toast.BOTTOM
         );
-      }
-      else{
+      } else {
+        print('No email');
+        setState(() {
+          _isChecked = false;
+        });
+        Toast.show(
+          "Check your credentials", 
+          context,
+          duration: Toast.LENGTH_SHORT,
+          gravity: Toast.BOTTOM
+        );
+      }  
+    } else{
         await prefs.setString('email', '');
         await prefs.setString('pass', '');
         setState(() {
@@ -291,7 +322,6 @@ class _LoginPageState extends State<LoginPage>{
         );
       }
     }
-  }
 
 
   Future<bool> _onBackPressAppBar() async {

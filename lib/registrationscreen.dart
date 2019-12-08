@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
  
 String pathAsset = 'assets/images/MyTradeBarter_login.PNG'; 
 String urlUpload = "http://tradebarterflutter.com/mytradebarter/php/register_user.php";
@@ -17,7 +18,7 @@ final TextEditingController _namecontroller = TextEditingController();
 final TextEditingController _emcontroller = TextEditingController();
 final TextEditingController _passcontroller = TextEditingController();
 final TextEditingController _phcontroller = TextEditingController();
-String _name,_email,_password,_phone;
+String _name,_email,_password,_phone,_radius;
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -283,5 +284,16 @@ class RegisterWidgetState extends State<RegisterWidget> {
   bool _isEmailValid(String email) {
     return RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
   }
+
+  void savepref(String email, String pass) async {
+    print('Inside savepref');
+    _email = _emcontroller.text;
+    _password = _passcontroller.text;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('pass', pass);
+    print('Save pref $_email');
+    print('Save pref $_password');
+  }  
 
 }

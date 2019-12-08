@@ -27,7 +27,9 @@ class SplashScreen extends StatelessWidget {
         body: new Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/images/background.png"),
+              image: AssetImage(
+                "assets/images/background.png"
+              ),
               fit: BoxFit.cover
             ),
           ),
@@ -120,8 +122,12 @@ class _ProgressIndicatorState extends State<ProgressIndicator>
         Navigator.push(ctx, MaterialPageRoute(builder: (context) => MainScreen(user: user)));
       }
     }
+    
+    bool _isEmailValid(String email){
+    return RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+    }
 
-    void _onLogin(String _email, String pass, BuildContext ctx) {
+    void _onLogin(String email, String pass, BuildContext ctx) {
       http.post(urlLogin, body: {
         "email": _email,
         "password": _password,
@@ -142,7 +148,11 @@ class _ProgressIndicatorState extends State<ProgressIndicator>
             rating: dres[6]
           );
     
-          Navigator.push(ctx, MaterialPageRoute(builder: (context) => MainScreen(user: user)));
+          Navigator.push(
+            ctx, 
+            MaterialPageRoute(builder: (context) => MainScreen(user: user))
+          );
+
         } else {
           User user = new User(
             name: "not register",
@@ -152,15 +162,14 @@ class _ProgressIndicatorState extends State<ProgressIndicator>
             credit: "0",
             rating: "0"
           );
-          Navigator.push(ctx, MaterialPageRoute(builder: (context) => MainScreen(user: user)));
+          Navigator.push(
+            ctx, 
+            MaterialPageRoute(builder: (context) => MainScreen(user: user))
+          );
         }
       }).catchError((err) {
         print(err);
       });
-    }
-
-    bool _isEmailValid(String email){
-    return RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
     }
 } 
 
