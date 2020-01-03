@@ -7,7 +7,6 @@ import 'package:mytradebarter/barterdetail.dart';
 import 'dart:convert';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
-//import 'package:mytradebarter/mainscreen.dart';
 import 'package:mytradebarter/user.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 

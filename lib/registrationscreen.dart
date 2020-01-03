@@ -9,7 +9,8 @@ import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
- 
+
+
 String pathAsset = 'assets/images/MyTradeBarter_login.PNG'; 
 String urlUpload = "http://tradebarterflutter.com/mytradebarter/php/register_user.php";
 File _image;
@@ -18,6 +19,7 @@ final TextEditingController _namecontroller = TextEditingController();
 final TextEditingController _emcontroller = TextEditingController();
 final TextEditingController _passcontroller = TextEditingController();
 final TextEditingController _phcontroller = TextEditingController();
+final TextEditingController _radiuscontroller = TextEditingController();
 String _name,_email,_password,_phone,_radius;
 
 class RegisterScreen extends StatefulWidget {
@@ -39,8 +41,8 @@ class _RegisterUserState extends State<RegisterScreen> {
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          title: Text('New User Registration'),
-          backgroundColor: Colors.blue,
+          title: Text('NEW USER REGISTRATION'),
+          backgroundColor: Colors.blueGrey,
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -100,11 +102,9 @@ class RegisterWidgetState extends State<RegisterWidget> {
         ),
         
 
-        SizedBox(height: 10),
-
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: 10,
+            horizontal: 5,
             vertical: 20
           ),
           width: double.infinity,
@@ -146,17 +146,25 @@ class RegisterWidgetState extends State<RegisterWidget> {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   icon: Icon(Icons.lock),
-                  errorText: 'Please enter password not less than 6 words'
                 ),
                 obscureText: true,
               ),
 
               TextField(
                 controller: _phcontroller,
+                keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   labelText: 'Phone number',
                   icon: Icon(Icons.phone),
-                  errorText: 'Please enter valid phone number'
+                ),
+              ),
+
+              TextField(
+                controller: _radiuscontroller,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Radius',
+                  icon: Icon(Icons.blur_circular),
                 ),
               ),
 
@@ -228,11 +236,13 @@ class RegisterWidgetState extends State<RegisterWidget> {
     _email = _emcontroller.text;
     _password = _passcontroller.text;
     _phone = _phcontroller.text;
+    _radius = _radiuscontroller.text;
 
     if((_isEmailValid(_email)) &&
       (_password.length > 5) && 
       (_image != null) && 
-      (_phone.length > 5)) {
+      (_phone.length > 5) && 
+      (int.parse(_radius) < 30)) {
         ProgressDialog pr = new ProgressDialog
         (
           context, 
@@ -248,6 +258,7 @@ class RegisterWidgetState extends State<RegisterWidget> {
           "email": _email,
           "password": _password,
           "phone": _phone,
+          "radius": _radius,
         }).then((res) {
           print(res.statusCode);
           Toast.show

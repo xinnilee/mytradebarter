@@ -1,26 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mytradebarter/user.dart';
-import 'package:toast/toast.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'barter.dart';
 import 'mainscreen.dart';
  
 
-class BarterDetail extends StatefulWidget {
+class Detail extends StatefulWidget {
   final Barter barter;
   final User user;
 
-  const BarterDetail({Key key, this.barter, this.user}) : super(key: key);
+  const Detail({Key key, this.barter, this.user}) : super(key: key);
 
   @override
-  _BarterDetailState createState() => _BarterDetailState();
+  _DetailState createState() => _DetailState();
 }
 
-class _BarterDetailState extends State<BarterDetail> {
+class _DetailState extends State<Detail> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -163,23 +160,6 @@ class _DetailInterfaceState extends State<DetailInterface> {
               
               SizedBox(height: 20,),
 
-              Container(
-                width: 350,
-                child: MaterialButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0)
-                  ),
-                  height: 40,
-                  child: Text(
-                    "ACCEPT BARTER",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  color: Colors.blueAccent,
-                  textColor: Colors.white,
-                  elevation: 5,
-                  onPressed: _onAcceptBarter,
-                ),
-              )
             ],
           ),
         )
@@ -187,125 +167,4 @@ class _DetailInterfaceState extends State<DetailInterface> {
     );
   }
 
-  void _onAcceptBarter() {
-    if(widget.user.email=="user@nonregister") {
-      Toast.show(
-        "Please register to view accept barter",
-        context,
-        duration: Toast.LENGTH_LONG,
-        gravity: Toast.BOTTOM
-      );
-      return;
-    } else {
-      _showDialog();
-    }
-    print("Accept Barter");
-  }
-
-  void _showDialog() {
-    if(int.parse(widget.user.credit) < 1) {
-      Toast.show(
-        "Credit not enough", 
-        context,
-        duration: Toast.LENGTH_LONG,
-        gravity: Toast.BOTTOM);
-        return;
-    }
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("Accept " + widget.barter.bartertitle),
-          content: new Text("Are you sure?"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Yes"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                acceptRequest();
-              },
-            ),
-
-            new FlatButton(
-              child: new Text("No"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<String> acceptRequest() async {
-    String urlAcceptBarter = "http://tradebarterflutter.com/mytradebarter/php/accept_barter.php";
-    ProgressDialog pr = new ProgressDialog(
-      context,
-      type: ProgressDialogType.Normal,
-      isDismissible: false
-    );
-    pr.style(message: "Accepting Barter");
-    pr.show();
-
-    http.post(urlAcceptBarter, body: {
-      "barterid": widget.barter.barterid,
-      "email": widget.user.email,
-      "credit": widget.user.credit,
-    }).then((res) {
-      print(res.body);
-
-      if(res.body == "success") {
-        Toast.show(
-          "Success", 
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.BOTTOM
-        );
-        pr.dismiss();
-        _onLogin(widget.user.email, context);
-      } else {
-        Toast.show(
-          "Failed",
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.BOTTOM
-        );
-      }
-    }).catchError((err) {
-      print(err);
-      pr.dismiss();
-    });
-    return null;
-  }
-
-  void _onLogin(String email, BuildContext ctx) {
-    String urlgetuser = "http://tradebarterflutter.com/mytradebarter/php/get_user.php";
-
-    http.post(urlgetuser, body: {
-      "email": email,
-    }).then((res) {
-      print(res.statusCode);
-      var string = res.body;
-      List dres = string.split(",");
-      print(dres);
-
-      if(dres[0] == "success") {
-        User user = new User(
-          name: dres[1],
-          email: dres[2],
-          phone: dres[3],
-          radius: dres[4],
-          credit: dres[5],
-          rating: dres[6]
-        );
-        Navigator.push(
-          ctx, 
-          MaterialPageRoute(builder: (context) => MainScreen(user: user))
-        );
-      }
-    }).catchError((err) {
-      print(err);
-    });
-  }
 }

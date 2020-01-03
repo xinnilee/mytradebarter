@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:mytradebarter/mainscreen.dart';
 import 'package:mytradebarter/registrationscreen.dart';
 import 'package:mytradebarter/forgotscreen.dart';
+import 'package:mytradebarter/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart'as http;
@@ -15,6 +16,7 @@ String urlLogin = "http://tradebarterflutter.com/mytradebarter/php/login_user.ph
   String _email = "";
   final TextEditingController _passcontroller = TextEditingController();
   String _password = "";
+  
   bool _isChecked = false;
 
 void main() => runApp(MyApp());
@@ -29,6 +31,10 @@ class MyApp extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget{
+  final User user;
+
+  const LoginPage({Key key, this.user}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -50,6 +56,10 @@ class _LoginPageState extends State<LoginPage>{
       onWillPop: _onBackPressAppBar,
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+            title: Text('LOGIN PAGE'),
+            backgroundColor: Colors.blueGrey,
+          ),
         body: new Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -179,6 +189,17 @@ class _LoginPageState extends State<LoginPage>{
                 )
               ),
 
+              SizedBox(
+                height: 20,
+              ),
+
+              GestureDetector(
+                onTap: _onMain,
+                child: Text('Main Screen',
+                    style: TextStyle(fontSize: 16)
+                )
+              ),
+
             ],
           ),
         ),
@@ -250,14 +271,31 @@ class _LoginPageState extends State<LoginPage>{
   }
 
   void _onForgot() {
-    print('on Forgot');
+    print('on Forgot Password');
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ForgotScreen()
-      ));
+      MaterialPageRoute(builder: (context) => ForgotScreen()
+      )
+    );  
   }
 
+  void _onMain(){
+    User user = new User(
+      name: "not register",
+      email: "user@noregister",
+      phone: "not register",
+      radius: "15",
+      credit: "0",
+      rating: "0"
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MainScreen(user: user)
+    ));
+        
+
+  }
+  
   void _onChange(bool value){
     setState((){
       _isChecked = value;
@@ -323,10 +361,14 @@ class _LoginPageState extends State<LoginPage>{
       }
     }
 
-
-  Future<bool> _onBackPressAppBar() async {
-    SystemNavigator.pop();
-    print('Backpress');
+    Future<bool> _onBackPressAppBar() async {
+    Navigator.pop(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MainScreen(
+            user: widget.user,
+          ),
+        ));
     return Future.value(false);
   }
 

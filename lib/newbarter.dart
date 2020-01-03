@@ -12,11 +12,11 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:place_picker/place_picker.dart';
 
 File _image;
-String pathAsset = 'assets/images/background.jpg';
+String pathAsset = 'assets/images/background.png';
 String urlUpload = "http://tradebarterflutter.com/mytradebarter/php/upload_barter.php";
 String urlgetuser = "http://tradebarterflutter.com/mytradebarter/php/get_user.php";
 
-TextEditingController _bartercontroller = TextEditingController();
+final TextEditingController _bartercontroller = TextEditingController();
 final TextEditingController _desccontroller = TextEditingController();
 final TextEditingController _pricecontroller = TextEditingController();
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
@@ -39,7 +39,7 @@ class _NewBarterState extends State<NewBarter> {
       onWillPop: _onBackPressAppBar,
       child: Scaffold(
           appBar: AppBar(
-            title: Text('REQUEST HELP'),
+            title: Text('REQUEST NEW BARTER'),
             backgroundColor: Colors.blueGrey,
           ),
           body: SingleChildScrollView(
@@ -95,31 +95,18 @@ class _CreateNewBarterState extends State<CreateNewBarter> {
                 fit: BoxFit.fill,
               )),
             )),
-        Text('Click on image above to take barter picture'),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-            children: <Widget>[
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: _changeBarter),
-              new IconButton(iconSize: 40, icon: new Icon(Icons.fastfood), onPressed: _changeFood),
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-            ],
-            ),
-          ),
+
+        Text('Click on image above to take barter picture',),
 
         TextField(
           controller: _bartercontroller,
-          keyboardType: TextInputType.emailAddress,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             labelText: 'Barter Title',
             icon: Icon(Icons.title),
         )),
-
+          
         TextField(
           controller: _pricecontroller,
           keyboardType: TextInputType.number,
@@ -131,14 +118,14 @@ class _CreateNewBarterState extends State<CreateNewBarter> {
         TextField(
           controller: _desccontroller,
           keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.previous,
+          textInputAction: TextInputAction.done,
           maxLines: 3,
           decoration: InputDecoration(
             labelText: 'Barter Description',
             icon: Icon(Icons.info),
         )),
         
-        SizedBox(height: 5,),
+        SizedBox(height: 20,),
                                                  
         GestureDetector(
           onTap: _loadmap,
@@ -148,7 +135,7 @@ class _CreateNewBarterState extends State<CreateNewBarter> {
             style: TextStyle(fontWeight: FontWeight.bold)),
           )),
                                                  
-        SizedBox( height: 5,),
+        SizedBox( height: 10,),
                                                  
         Row(
           children: <Widget>[
@@ -160,15 +147,15 @@ class _CreateNewBarterState extends State<CreateNewBarter> {
           ],
         ),
 
-        SizedBox(height: 10,),
+        SizedBox(height: 20,),
                                                 
         MaterialButton(
           shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           minWidth: 300,
           height: 50,
-          child: Text('Request New Barter'),
-          color: Colors.blueGrey,
+          child: Text('REQUEST NEW BARTER'),
+          color: Colors.blueAccent,
           textColor: Colors.white,
           elevation: 15,
           onPressed: _onAddBarter,
@@ -185,13 +172,20 @@ class _CreateNewBarterState extends State<CreateNewBarter> {
                                          
   void _onAddBarter() {
     if (_image == null) {
-      Toast.show("Please take picture", context,
-      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      Toast.show(
+        "Please take picture", 
+        context,
+        duration: Toast.LENGTH_LONG, 
+        gravity: Toast.BOTTOM);
       return;
     }
     if (_bartercontroller.text.isEmpty) {
-      Toast.show("Please enter barter title", context,
-      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      Toast.show(
+        "Please enter barter title", 
+        context,
+        duration: Toast.LENGTH_LONG, 
+        gravity: Toast.BOTTOM
+      );
       return;
     }
     if (_pricecontroller.text.isEmpty) {
@@ -302,7 +296,8 @@ class _CreateNewBarterState extends State<CreateNewBarter> {
             radius: dres[4],
             credit: dres[5],
             rating: dres[6]);
-          Navigator.push(ctx,
+          Navigator.push(
+            ctx,
             MaterialPageRoute(
               builder: (context) => MainScreen(user: user))
           );
@@ -319,12 +314,5 @@ class _CreateNewBarterState extends State<CreateNewBarter> {
     print("MAP SHOW:");
     print(result);
   }
-                                         
-  void _changeBarter() {
-    _bartercontroller.text = "Runner";
-  }
-                           
-  void _changeFood() {
-    _bartercontroller.text = "Order Food";
-  }
+
 }

@@ -66,18 +66,19 @@ class _TabScreen4State extends State<TabScreen4> {
                         Stack(children: <Widget>[
                           Image.asset(
                             "assets/images/background.png",
-                          fit: BoxFit.fitWidth,
-                          height: 350,
-                          width: 500,
+                            fit: BoxFit.fitHeight,
+                            height: 440,
+                            width: 600,
                           ),
                           Column(
                             children: <Widget>[
+                              SizedBox(height: 10,),
                               Center(
                                 child: Text("MyTradeBarter",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black)),
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black)),
                               ),
                               SizedBox(
                                 height: 5,
@@ -85,135 +86,150 @@ class _TabScreen4State extends State<TabScreen4> {
                               GestureDetector(
                                 onTap: _takePicture,
                                 child: Container(
-                                    width: 150.0,
-                                    height: 150.0,
-                                    decoration: new BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: Colors.white),
-                                        image: new DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: new NetworkImage(
-                                                "")))),
+                                  width: 120.0,
+                                  height: 120.0,
+                                  decoration: new BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.black),
+                                    image: new DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: new NetworkImage(
+                                        "http://tradebarterflutter.com/mytradebarter/profile/${widget.user.email}.jpg?dummy=${(number)}'",
+                                      )
+                                    )
+                                  )
+                                ),
                               ),
                               SizedBox(height: 5),
+
                               Container(
-                                child: Text(
-                                  widget.user.name?.toUpperCase() ??
-                                      'Not register',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                width: 350,
+                                height: 250,
+                                child: Card(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          new Container(
+                                            child: Text(
+                                              widget.user.name?.toUpperCase() ??
+                                              'Not register',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                            ),
+                                          ),
+                                          
+                                          Container(
+                                            child: Text(
+                                              widget.user.email,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14
+                                              ),
+                                            ),
+                                          ),
+                              
+                                          Column(
+                                            children: <Widget>[
+                                              Row(
+                                                children: <Widget>[
+                                                  Icon(
+                                                   Icons.phone_android,
+                                                  ),
+                                                  Text(widget.user.phone ??
+                                                  'not registered'),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                              
+                                          Row(
+                                            children: <Widget>[
+                                              Icon(Icons.rate_review,),
+                                              SizedBox(width: 5,),
+                                  
+                                              RatingBar(
+                                                itemCount: 5,
+                                                itemSize: 12,
+                                                initialRating: double.parse(
+                                                  widget.user.rating.toString() ?? 0.0),
+                                                itemPadding:
+                                                  EdgeInsets.symmetric(horizontal: 2.0),
+                                                itemBuilder: (context, _) => Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
+                                                ),onRatingUpdate: (double value) {},
+                                              ),
+                                            ],
+                                          ),
+                                        
+                                          Column(
+                                          children: <Widget>[
+                                            Row(
+                                              children: <Widget>[
+                                                Icon( Icons.rounded_corner, ),
+                                                Text(
+                                                  "Barter Radius " +
+                                                  widget.user.radius +
+                                                  "KM" ??
+                                                  "Barter Radius 0 KM"
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                          ),
+                                          
+                                          Column(
+                                            children: <Widget>[
+                                              Row(
+                                                children: <Widget>[
+                                                  Icon(Icons.credit_card,),
+                                                  SizedBox(width: 5,),
+                                                  Flexible(
+                                                    child: Text("You have " +
+                                                      widget.user.credit +
+                                                      " Credit" ??
+                                                      "You have 0 Credit"),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                              
+                                          Center(
+                                            child: Row(
+                                              children: <Widget>[
+                                                Icon( Icons.location_on,),
+                                                SizedBox(width: 5,),
+                                                Flexible(
+                                                  child: Text(_currentAddress),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+                                  ),
                                 ),
                               ),
-                              Container(
-                                child: Text(
-                                  widget.user.email,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
-                                ),
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.phone_android,
-                                      ),
-                                      Text(widget.user.phone ??
-                                          'not registered'),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.rate_review,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  RatingBar(
-                                    itemCount: 5,
-                                    itemSize: 12,
-                                    initialRating: double.parse(
-                                        widget.user.rating.toString() ?? 0.0),
-                                    itemPadding:
-                                        EdgeInsets.symmetric(horizontal: 2.0),
-                                    itemBuilder: (context, _) => Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                    ),onRatingUpdate: (double value) {},
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.rounded_corner,
-                                      ),
-                                      Text("Barter Radius " +
-                                              widget.user.radius +
-                                              "KM" ??
-                                          'Barter Radius 0 KM'),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.credit_card,
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Flexible(
-                                        child: Text("You have " +
-                                                widget.user.credit +
-                                                " Credit" ??
-                                            "You have 0 Credit"),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.location_on,
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Flexible(
-                                      child: Text(_currentAddress),
-                                    ),
-                                  ],
-                                ),
-                              ),
+
                               SizedBox(
-                                height: 5,
+                                height: 10,
                               ),
+
                               Container(
                                 color: Colors.blueGrey,
                                 child: Center(
                                   child: Text("My Profile ",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white)),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white
+                                    )
+                                  ),
                                 ),
                               ),
                             ],
@@ -232,6 +248,10 @@ class _TabScreen4State extends State<TabScreen4> {
                     padding: EdgeInsets.all(2.0),
                     child: Column(
                       children: <Widget>[
+                        MaterialButton(
+                          onPressed: _gotologinPage,
+                          child: Text("LOG IN"),
+                        ),
                         MaterialButton(
                           onPressed: _changeName,
                           child: Text("CHANGE NAME"),
@@ -255,10 +275,6 @@ class _TabScreen4State extends State<TabScreen4> {
                         MaterialButton(
                           onPressed: _registerAccount,
                           child: Text("REGISTER"),
-                        ),
-                        MaterialButton(
-                          onPressed: _gotologinPage,
-                          child: Text("LOG IN"),
                         ),
                         MaterialButton(
                           onPressed: _gotologout,
@@ -414,7 +430,7 @@ class _TabScreen4State extends State<TabScreen4> {
     );
   }
 
-  void _logout() async {
+  void _gotologout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', '');
     await prefs.setString('pass', '');
@@ -565,7 +581,7 @@ class _TabScreen4State extends State<TabScreen4> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Change phone for" + widget.user.name),
+          title: new Text("Change phone number for " + widget.user.name),
           content: new TextField(
               keyboardType: TextInputType.phone,
               controller: phoneController,
@@ -655,7 +671,7 @@ class _TabScreen4State extends State<TabScreen4> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Go to login page?" + widget.user.name),
+          title: new Text("Go to login page? " + widget.user.name),
           content: new Text("Are your sure?"),
           actions: <Widget>[
             new FlatButton(
@@ -680,13 +696,13 @@ class _TabScreen4State extends State<TabScreen4> {
     );
   }
 
-  void _gotologout() async {
+  void _gotolog() async {
     print(widget.user.name);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Go to login page?" + widget.user.name),
+          title: new Text("Go to login page? " + widget.user.name),
           content: new Text("Are your sure?"),
           actions: <Widget>[
             new FlatButton(
@@ -730,7 +746,7 @@ class _TabScreen4State extends State<TabScreen4> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Buy Credit?"),
+          title: new Text("Want to Buy Credit?"),
           content: Container(
             height: 100,
             child: DropdownExample(),

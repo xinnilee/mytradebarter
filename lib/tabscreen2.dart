@@ -3,12 +3,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:mytradebarter/newbarter.dart';
+import 'package:mytradebarter/barter.dart';
+import 'package:mytradebarter/detail.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'package:mytradebarter/registrationscreen.dart';
 import 'package:mytradebarter/user.dart';
 import 'package:toast/toast.dart';
 import 'package:progress_dialog/progress_dialog.dart'; 
+
+import 'SlideRightRoute.dart';
 
 double perpage = 1;
 
@@ -32,7 +36,7 @@ class _TabScreen2State extends State<TabScreen2> {
   void initState(){
     super.initState();
     refreshKey = GlobalKey<RefreshIndicatorState>();
-    //_getCurrentLocation();
+    _getCurrentLocation();
   }
 
   @override
@@ -46,9 +50,9 @@ class _TabScreen2State extends State<TabScreen2> {
         resizeToAvoidBottomPadding: false,
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Colors.blueAccent,
           elevation: 2.0,
-          onPressed: (){},
+          onPressed: requestNewBarter,
           tooltip: 'Request new help',
         ),
 
@@ -73,7 +77,8 @@ class _TabScreen2State extends State<TabScreen2> {
                           width: 500,
                         ),
                         Column(
-                          children: <Widget>[SizedBox(height: 20,),
+                          children: <Widget>[
+                          SizedBox(height: 20),
                           Center(
                             child: Text(
                               "MyTradeBarter",
@@ -158,6 +163,7 @@ class _TabScreen2State extends State<TabScreen2> {
                       ],),
 
                       SizedBox(height: 4,),
+
                       Container(
                         color: Colors.blueGrey,
                         child: Center(
@@ -190,12 +196,28 @@ class _TabScreen2State extends State<TabScreen2> {
                 );
               }
 
-              index -= -1;
+              index -= 1;
               return Padding(
                 padding: EdgeInsets.all(2.0),
                 child: Card(
                   elevation: 2,
                   child: InkWell(
+                    onTap: () => _onDetail(
+                      data[index]['barterid'],
+                      data[index]['barterprice'],
+                      data[index]['barterdesc'],
+                      data[index]['barterowner'],
+                      data[index]['barterimage'],
+                      data[index]['bartertime'],
+                      data[index]['bartertitle'],
+                      data[index]['barterlatitude'],
+                      data[index]['barterlongitude'],
+                      data[index]['barterrating'],
+                      widget.user.radius,
+                      widget.user.name,
+                      widget.user.credit,
+                    ),
+
                     onLongPress: () => _onBarterDelete(
                       data[index]['barterid'].toString(),
                       data[index]['bartertitle'].toString()
@@ -213,7 +235,7 @@ class _TabScreen2State extends State<TabScreen2> {
                               image: DecorationImage(
                                 fit: BoxFit.fill,
                                 image: NetworkImage(
-                                  ""
+                                  "http://tradebarterflutter.com/mytradebarter/images/${data[index]['barterimage']}"
                                 )
                               )
                             )
@@ -250,8 +272,11 @@ class _TabScreen2State extends State<TabScreen2> {
                                   ),
 
                                   SizedBox(height: 5,),
-                                  Text("RM "+data[index]['barterprice']),
+
+                                  Text("RM " + data[index]['barterprice']),
+
                                   SizedBox(height: 5,),
+
                                   Text(data[index]['bartertime']),
                                 ],
                               ),
@@ -294,7 +319,7 @@ class _TabScreen2State extends State<TabScreen2> {
       setState(() {
         _currentAddress =
             "${place.name},${place.locality}, ${place.postalCode}, ${place.country}";
-        init(); //load data from database into list array 'data'
+        init(); 
       });
     } catch (e) {
       print(e);
@@ -302,12 +327,14 @@ class _TabScreen2State extends State<TabScreen2> {
   }  
 
   Future<String> makeRequest() async {
-    String urlLoadJobs = "http://tradebarterflutter.com/mytradebarter/php/load_barter_user.php";
-     ProgressDialog pr = new ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
+    String urlLoadBarter = "http://tradebarterflutter.com/mytradebarter/php/load_barter_user.php";
+      ProgressDialog pr = new ProgressDialog(
+        context,
+        type: ProgressDialogType.Normal, 
+        isDismissible: false);
         pr.style(message: "Loading All Accepted Barter");
     pr.show();
-    http.post(urlLoadJobs, body: {
+    http.post(urlLoadBarter, body: {
       "email": widget.user.email ?? "notavail",
 
     }).then((res) {
@@ -394,12 +421,12 @@ class _TabScreen2State extends State<TabScreen2> {
   }  
 
   Future<String> deleteRequest(String barterid) async {
-    String urlLoadJobs = "http://tradebarterflutter.com/mytradebarter/php/delete_barter.php";
+    String urlLoadBarter = "http://tradebarterflutter.com/mytradebarter/php/delete_barter.php";
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Deleting Barter");
     pr.show();
-    http.post(urlLoadJobs, body: {
+    http.post(urlLoadBarter, body: {
       "barterid": barterid,
     }).then((res) {
       print(res.body);
@@ -417,6 +444,43 @@ class _TabScreen2State extends State<TabScreen2> {
     });
     return null;
   }
+
+  void _onDetail(
+    String barterid,
+    String barterprice,
+    String barterdesc,
+    String barterowner,
+    String barterimage,
+    String bartertime,
+    String bartertitle,
+    String barterlatitude,
+    String barterlongtitude,
+    String barterrating,
+    String email,
+    String name,
+    String credit
+  ) {
+    Barter barter = new Barter(
+      barterid : barterid,
+      barterprice : barterprice,
+      barterdes : barterdesc,
+      barterowner : barterowner,
+      barterimage : barterimage,
+      bartertime : bartertime,
+      bartertitle : bartertitle,
+      barterworker : null,
+      barterlat : barterlatitude,
+      barterlon : barterlongtitude,
+      barterrating : barterrating,
+    );
+    print(data);
+
+    Navigator.push(
+      context, 
+      SlideRightRoute(page: Detail(barter: barter, user: widget.user))
+    );
+  }  
+
 }
 class SlideMenu extends StatefulWidget {
   final Widget child;
@@ -452,7 +516,6 @@ class _SlideMenuState extends State<SlideMenu> with SingleTickerProviderStateMix
 
     return new GestureDetector(
       onHorizontalDragUpdate: (data) {
-        // we can access context.size here
         setState(() {
           _controller.value -= data.primaryDelta / context.size.width;
         });

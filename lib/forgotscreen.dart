@@ -31,8 +31,8 @@ class _ResetPageState extends State<ForgotScreen>{
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          title: Text('Recover password'),
-          backgroundColor: Colors.blue,
+          title: Text('RECOVER PASSWORD'),
+          backgroundColor: Colors.blueGrey,
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -48,7 +48,7 @@ class _ResetPageState extends State<ForgotScreen>{
     );
   }
 
-  Future<bool> _onBackPressAppBar() async {
+Future<bool> _onBackPressAppBar() async {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

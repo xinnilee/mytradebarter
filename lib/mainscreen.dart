@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mytradebarter/tabscreen.dart';
+import 'tabscreen.dart';
 import 'package:mytradebarter/tabscreen2.dart';
 import 'package:mytradebarter/tabscreen3.dart';
 import 'package:mytradebarter/tabscreen4.dart';
@@ -52,12 +52,12 @@ class _MainScreenState extends State<MainScreen> {
 
        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            title: Text("Barter"),
+            icon: Icon(Icons.home),
+            title: Text("Home"),
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.format_list_bulleted),
             title: Text("Posted Barter"),
           ),
 

@@ -3,10 +3,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:mytradebarter/barter.dart';
+import 'package:mytradebarter/detail.dart';
 import 'package:flutter/services.dart';
 import 'package:mytradebarter/user.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
+
+import 'SlideRightRoute.dart';
 
 double perpage = 1;
 
@@ -189,6 +193,27 @@ class _TabScreen3State extends State<TabScreen3> {
                       child: Card(
                         elevation: 2,
                         child: InkWell(
+                          onTap: () => _onDetail(
+                            data[index]['barterid'],
+                            data[index]['barterprice'],
+                            data[index]['barterdesc'],
+                            data[index]['barterowner'],
+                            data[index]['barterimage'],
+                            data[index]['bartertime'],
+                            data[index]['bartertitle'],
+                            data[index]['barterlatitude'],
+                            data[index]['barterlongitude'],
+                            data[index]['barterrating'],
+                            widget.user.radius,
+                            widget.user.name,
+                            widget.user.credit,
+                           ),
+
+                          onLongPress: () => _onBarterDelete(
+                            data[index]['barterid'].toString(),
+                            data[index]['bartertitle'].toString()
+                          ),
+
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Row(
@@ -202,7 +227,7 @@ class _TabScreen3State extends State<TabScreen3> {
                                       image: DecorationImage(
                                     fit: BoxFit.fill,
                                     image: NetworkImage(
-                                    ""
+                                    "http://tradebarterflutter.com/mytradebarter/images/${data[index]['barterimage']}"
                                   )))),
                                 Expanded(
                                   child: Container(
@@ -282,14 +307,14 @@ class _TabScreen3State extends State<TabScreen3> {
   }
 
   Future<String> makeRequest() async {
-    String urlLoadJobs = "http://tradebarterflutter.com/mytradebarter/php/load_accepted_jobs.php";
+    String urlLoadBarter = "http://tradebarterflutter.com/mytradebarter/php/load_accepted_barter.php";
     ProgressDialog pr = new ProgressDialog(
       context,
       type: ProgressDialogType.Normal, 
       isDismissible: false);
     pr.style(message: "Loading All Accepted Barter");
     pr.show();
-    http.post(urlLoadJobs, body: {
+    http.post(urlLoadBarter, body: {
       "email": widget.user.email ?? "notavail",
 
     }).then((res) {
@@ -324,5 +349,96 @@ class _TabScreen3State extends State<TabScreen3> {
     return null;
   }
 
-  
+  void _onDetail(
+    String barterid,
+    String barterprice,
+    String barterdesc,
+    String barterowner,
+    String barterimage,
+    String bartertime,
+    String bartertitle,
+    String barterlatitude,
+    String barterlongtitude,
+    String barterrating,
+    String email,
+    String name,
+    String credit
+  ) {
+    Barter barter = new Barter(
+      barterid : barterid,
+      barterprice : barterprice,
+      barterdes : barterdesc,
+      barterowner : barterowner,
+      barterimage : barterimage,
+      bartertime : bartertime,
+      bartertitle : bartertitle,
+      barterworker : null,
+      barterlat : barterlatitude,
+      barterlon : barterlongtitude,
+      barterrating : barterrating,
+    );
+    print(data);
+
+    Navigator.push(
+      context, 
+      SlideRightRoute(page: Detail(barter: barter, user: widget.user))
+    );
+  }
+
+  void _onBarterDelete(String barterid, String bartername) {
+    print("Delete " + barterid);
+    _showDialog(barterid, bartername);
+  }    
+
+  void _showDialog(String barterid, String bartername) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Delete " + bartername),
+          content: new Text("Are your sure?"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Yes"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                deleteRequest(barterid);
+              },
+            ),
+            new FlatButton(
+              child: new Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }  
+
+  Future<String> deleteRequest(String barterid) async {
+    String urlLoadBarter = "http://tradebarterflutter.com/mytradebarter/php/delete_barter.php";
+    ProgressDialog pr = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false);
+    pr.style(message: "Deleting Barter");
+    pr.show();
+    http.post(urlLoadBarter, body: {
+      "barterid": barterid,
+    }).then((res) {
+      print(res.body);
+      if (res.body == "success") {
+        Toast.show("Success", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        init();
+      } else {
+        Toast.show("Failed", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      }
+    }).catchError((err) {
+      print(err);
+      pr.dismiss();
+    });
+    return null;
+  }
 }
