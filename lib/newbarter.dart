@@ -16,7 +16,7 @@ String pathAsset = 'assets/images/background.png';
 String urlUpload = "http://tradebarterflutter.com/mytradebarter/php/upload_barter.php";
 String urlgetuser = "http://tradebarterflutter.com/mytradebarter/php/get_user.php";
 
-final TextEditingController _bartercontroller = TextEditingController();
+TextEditingController _bartercontroller = TextEditingController();
 final TextEditingController _desccontroller = TextEditingController();
 final TextEditingController _pricecontroller = TextEditingController();
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
